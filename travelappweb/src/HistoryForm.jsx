@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { getDatabase, ref, push, set } from "firebase/database";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "firebase/storage";
 
+import  './Form.css';
 const firebaseApp = require('./firebase.js');
 
 const database = getDatabase(firebaseApp.FIREBASE_APP);
@@ -85,18 +86,18 @@ const HistoryForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="my-form" onSubmit={handleSubmit}>
       <label htmlFor="name">Tên di tích:</label>
-      <input type="text" id="name" name="name" value={name} onChange={handleNameChange} required /><br />
+      <input type="text" id="name" name="name" value={name} onChange={handleNameChange} required />
 
       <label htmlFor="description">Mô tả:</label>
-      <textarea id="description" name="description" value={description} onChange={handleDescriptionChange} required></textarea><br />
+      <textarea id="description" name="description" value={description} onChange={handleDescriptionChange} required></textarea>
 
       <label htmlFor="address">Địa chỉ:</label>
-      <input type="text" id="address" name="address" value={address} onChange={handleAddressChange} required /><br />
+      <input type="text" id="address" name="address" value={address} onChange={handleAddressChange} required />
 
       <label htmlFor="image">Ảnh:</label>
-      <input type="file" id="image" name="image" accept="image/*" multiple onChange={handleImageChange} required /><br />
+      <input type="file" id="image" name="image" accept="image/*" multiple onChange={handleImageChange} required />
 
       <button type="submit">Lưu</button>
     </form>

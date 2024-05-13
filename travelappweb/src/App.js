@@ -6,10 +6,13 @@ import LoginForm from "./LoginForm";
 
 import { getDatabase, ref, push, set } from "firebase/database";
 
-import Render from "./Render.js";
+import RenderHistory from "./RenderHistory.jsx";
 import FavoritePlaces from "./FavoritePlaces.jsx";
 import Place from "./Place.jsx";
 import { setUserId } from "firebase/analytics";
+import FestivalForm from "./FestivalForm.jsx";
+import RenderFestival from "./RenderFestival.jsx";
+import ArticleForm from "./ArticalForm.jsx";
 const firebaseApp = require("./firebase.js");
 
 const database = getDatabase(firebaseApp.FIREBASE_APP);
@@ -21,33 +24,54 @@ const router = createBrowserRouter([
   },
   {
     path: "/formHistory",
-    element: <>
-    <HistoryForm/>
-    <Render/>
-    </>,
+    element: (
+      <>
+        <HistoryForm />
+        <RenderHistory />
+      </>
+    ),
+  },
+  {
+    path: "/formFestival",
+    element: (
+      <>
+        <FestivalForm />
+        <RenderFestival />
+      </>
+    ),
+  },
+  {
+    path: "/formArtical",
+    element: (
+      <>
+        <ArticleForm />
+        {/* <RenderFestival /> */}
+      </>
+    ),
   },
   {
     path: "/favorite",
-    element: <>
-    <FavoritePlaces />
-    <Place/>
-    </>,
+    element: (
+      <>
+        <FavoritePlaces />
+        <Place />
+      </>
+    ),
   },
 ]);
 
-
 function App() {
-
   return (
     <>
       <RouterProvider router={router}>
-        <LoginForm  />
+        <LoginForm />
         <HistoryForm />
-        <Render  />
-        <FavoritePlaces  />
-        <Place  />
+        <RenderHistory />
+        <FestivalForm />
+        <RenderFestival />
+        <FavoritePlaces />
+        <Place />
       </RouterProvider>
-
     </>
   );
 }
