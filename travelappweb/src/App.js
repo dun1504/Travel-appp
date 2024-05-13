@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Link  } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import HistoryForm from "./HistoryForm";
@@ -12,7 +12,9 @@ import Place from "./Place.jsx";
 import { setUserId } from "firebase/analytics";
 import FestivalForm from "./FestivalForm.jsx";
 import RenderFestival from "./RenderFestival.jsx";
-import ArticleForm from "./ArticalForm.jsx";
+import ArticleForm from "./ArticleForm.jsx";
+import RenderArticle from "./RenderArticle.jsx";
+import Home from "./Home.jsx";
 const firebaseApp = require("./firebase.js");
 
 const database = getDatabase(firebaseApp.FIREBASE_APP);
@@ -20,7 +22,7 @@ const database = getDatabase(firebaseApp.FIREBASE_APP);
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <LoginForm />,
+    element: <Home/>,
   },
   {
     path: "/formHistory",
@@ -45,7 +47,7 @@ const router = createBrowserRouter([
     element: (
       <>
         <ArticleForm />
-        {/* <RenderFestival /> */}
+        <RenderArticle />
       </>
     ),
   },
@@ -72,6 +74,8 @@ function App() {
         <FavoritePlaces />
         <Place />
       </RouterProvider>
+
+
     </>
   );
 }
