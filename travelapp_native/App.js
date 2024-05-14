@@ -22,31 +22,31 @@ export default function App() {
   // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
   //ios
-  async function requestUserPermission() {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  // async function requestUserPermission() {
+  //   const authStatus = await messaging().requestPermission();
+  //   const enabled =
+  //     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+  //     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-    if (enabled) {
-      console.log("Authorization status:", authStatus);
-    }
-  }
+  //   if (enabled) {
+  //     console.log("Authorization status:", authStatus);
+  //   }
+  // }
 
 
 
 
 
   useEffect(() => {
-    if(requestUserPermission){
-      //return fcm token for the device
-      messaging.getToken().then(token =>{
-        console.log(token);
-      })
-    }
-    else{
-      console.log("Failed token status", authStatus);
-    }
+    // if(requestUserPermission){
+    //   //return fcm token for the device
+    //   messaging.getToken().then(token =>{
+    //     console.log(token);
+    //   })
+    // }
+    // else{
+    //   console.log("Failed token status", authStatus);
+    // }
     
   }, []);
 
