@@ -37,6 +37,7 @@ const DetailsScreen = ({ navigation, route }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [location, setLocation] = useState(null);
+
   const searchLocation = async () => {
     try {
       const response = await Geocoding.from(place.address);
