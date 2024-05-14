@@ -38,9 +38,7 @@ const RenderFestival = () => {
           <th>Name</th>
           <th>Description</th>
           <th>Address</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>Ticket Price</th>
+          <th> Date</th>
           <th>Images</th>
         </tr>
       </thead>
@@ -50,9 +48,7 @@ const RenderFestival = () => {
             <td>{festival.name}</td>
             <td>{festival.description}</td>
             <td>{festival.address}</td>
-            <td>{festival.startDate}</td>
-            <td>{festival.endDate}</td>
-            <td>{festival.ticketPrice}</td>
+            <td>{festival.date}</td>
             <td>
               {festival.imageUrls && festival.imageUrls.length > 0 && (
                 <div>
