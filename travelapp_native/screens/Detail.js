@@ -8,6 +8,7 @@ import {
   Text,
   Alert,
   Modal,
+  ScrollView,
   Pressable,Button
 
 } from "react-native";
@@ -166,9 +167,9 @@ const DetailsScreen = ({ navigation, route }) => {
         <Text style={{ marginTop: 20, fontWeight: "bold", fontSize: 20 }}>
           About the trip
         </Text>
-        <Text style={{ marginTop: 20, lineHeight: 22 }}>
-          {place.description}
-        </Text>
+        <ScrollView style={{ maxHeight: 300 }}>
+          <Text style={{ marginTop: 20, lineHeight: 22 }}>{place.description}</Text>
+        </ScrollView>
       </View>
       <View style={style.footer}>
         <View style={{ flex: 1, flexDirection: "row", alignItems: "center" }}>
@@ -229,7 +230,7 @@ const style = StyleSheet.create({
     top: -30,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingVertical: 40,
+    paddingTop: 40,
     paddingHorizontal: 20,
     backgroundColor: COLORS.white,
     flex: 0.3,

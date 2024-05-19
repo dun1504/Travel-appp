@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons/faUser";
 import { faHome } from "@fortawesome/free-solid-svg-icons/faHome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons/faHeart";
+import { DrawerActions } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 
 import { getDatabase, ref, onValue } from "firebase/database";
@@ -44,39 +45,7 @@ const COLORS = {
   red: "red",
   orange: "#f5a623",
 };
-
-const categoryIcons = [
-  <TouchableOpacity onPress={() => navigation.navigate("PTTT2")}>
-    <Icon name="church" size={25} color={COLORS.primary} />
-  </TouchableOpacity>,
-  <TouchableOpacity onPress={() => navigation.navigate("PTTT2")}>
-    <Icon name="festival" size={25} color={COLORS.primary} />
-  </TouchableOpacity>,
-  <TouchableOpacity onPress={() => navigation.navigate("PTTT2")}>
-    <Icon name="school" size={25} color={COLORS.primary} />
-  </TouchableOpacity>,
-  <TouchableOpacity onPress={() => navigation.navigate("PTTT2")}>
-    <Icon name="stars" size={25} color={COLORS.primary} />
-  </TouchableOpacity>,
-];
-
-const ListCategories = ({navigation}) => {
-  const place= "Ho Guom"
-  return (
-    <View style={style.categoryContainer}>
-      {categoryIcons.map((icon, index) => (
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => navigation.navigate("PTTT1",navigation, place)}
-        >
-          <View key={index} style={style.iconContainer}>
-            {icon}
-          </View>
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
-};
+const MAX_DESCRIPTION_LENGTH = 100;
 
 const Card = ({ place, navigation }) => {
   return (
@@ -84,7 +53,7 @@ const Card = ({ place, navigation }) => {
       activeOpacity={0.8}
       onPress={() => navigation.navigate("Detail", place)}
     >
-      <ImageBackground style={style.cardImage} src={place.imageUrls[0]}>
+      <ImageBackground style={style.cardImage} source={{ uri: place.imageUrls[0] }}>
         <Text
           style={{
             color: COLORS.white,
@@ -109,24 +78,25 @@ const Card = ({ place, navigation }) => {
               {place.address}
             </Text>
           </View>
-          {/* <View style={{ flexDirection: "row" }}>
-            <Icon name="star" size={20} color={COLORS.white} />
-            <Text style={{ marginLeft: 5, color: COLORS.white }}>5.0</Text>
-          </View> */}
         </View>
       </ImageBackground>
     </TouchableOpacity>
   );
 };
 
-const RecommendedCard = ({ navigation,place }) => {
-  console.log(place.description);
+const RecommendedCard = ({ navigation, place }) => {
+  const truncateDescription = (description) => {
+    if (description.length > MAX_DESCRIPTION_LENGTH) {
+      return description.substring(0, MAX_DESCRIPTION_LENGTH) + '...';
+    }
+    return description;
+  };
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      onPress={() => navigation.navigate("Detail", place)}
+      onPress={() => navigation.navigate("News")}
     >
-      <ImageBackground style={style.rmCardImage} src={place.imageUrls[0]}>
+      <ImageBackground style={style.rmCardImage} source={{ uri: place.imageUrls[0] }}>
         <Text
           style={{
             color: COLORS.white,
@@ -151,14 +121,10 @@ const RecommendedCard = ({ navigation,place }) => {
                 {place.address}
               </Text>
             </View>
-            {/* <View style={{ flexDirection: "row" }}>
-              <Icon name="star" size={22} color={COLORS.white} />
-              <Text style={{ color: COLORS.white, marginLeft: 5 }}>5.0</Text>
-            </View> */}
           </View>
           <View>
-            <Text style={{ color: "black", fontSize: 16 }}>
-              {place.description}
+            <Text style={{ color: "white", fontSize: 15 }}>
+              {truncateDescription(place.description)}
             </Text>
           </View>
         </View>
@@ -169,9 +135,13 @@ const RecommendedCard = ({ navigation,place }) => {
 
 const Home = ({ navigation }) => {
   const [historyData, setHistoryData] = useState([]);
+  const [articleData, setArticleData] = useState([]);
+  const [festivalData, setFestivalData] = useState([]);
 
   useEffect(() => {
     const historyRef = ref(database, "history");
+    const ArticleRef = ref(database, "article");
+    const festivalRef = ref(database, "festival");
 
     onValue(historyRef, (snapshot) => {
       const data = snapshot.val();
@@ -185,13 +155,62 @@ const Home = ({ navigation }) => {
         setHistoryData([]);
       }
     });
+
+    onValue(ArticleRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const articleArray = Object.entries(data).map(([key, value]) => ({
+          id: key,
+          ...value,
+        }));
+        setArticleData(articleArray);
+      } else {
+        setArticleData([]);
+      }
+    });
+
+    onValue(festivalRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const festivalArray = Object.entries(data).map(([key, value]) => ({
+          id: key,
+          ...value,
+        }));
+        setFestivalData(festivalArray);
+      } else {
+        setFestivalData([]);
+      }
+    });
   }, []);
+
+  const ListCategories = ({ navigation }) => {
+    const categoryIcons = [
+      <TouchableOpacity onPress={() => navigation.navigate("ListPost", {historyData})}>
+        <Icon name="church" size={25} color={COLORS.primary} />
+      </TouchableOpacity>,
+      <TouchableOpacity onPress={() => navigation.navigate("Festival", {festivalData})}>
+        <Icon name="festival" size={25} color={COLORS.primary} />
+      </TouchableOpacity>,
+      <TouchableOpacity onPress={() => navigation.navigate("NewsList", { articleData })}>
+        <Icon name="school" size={25} color={COLORS.primary} />
+      </TouchableOpacity>,
+    ];
+    return (
+      <View style={style.categoryContainer}>
+        {categoryIcons.map((icon, index) => (
+          <View key={index} style={style.iconContainer}>
+            {icon}
+          </View>
+        ))}
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <StatusBar translucent={false} backgroundColor={COLORS.primary} />
       <View style={style.header}>
-        <Icon name="sort" size={28} color={COLORS.white} />
+        <Icon onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())} name="sort" size={28} color={COLORS.white} />
         <Icon name="notifications-none" size={28} color={COLORS.white} />
       </View>
       <ScrollView
@@ -217,7 +236,8 @@ const Home = ({ navigation }) => {
             </View>
           </View>
         </View>
-        <ListCategories navigation = {navigation} />
+          
+        <ListCategories navigation={navigation} />
         <Text style={style.sectionTitle}>Địa Điểm</Text>
         <View>
           <FlatList
@@ -240,18 +260,6 @@ const Home = ({ navigation }) => {
               <RecommendedCard place={item} navigation={navigation} />
             )}
           />
-          <Text style={style.sectionTitle}>Báo Hà Nội</Text>
-          <FlatList
-            snapToInterval={width - 20}
-            contentContainerStyle={{ paddingLeft: 20, paddingBottom: 20 }}
-            showsHorizontalScrollIndicator={false}
-            horizontal
-            data={historyData}
-            renderItem={({ item }) => (
-              <RecommendedCard place={item} navigation={navigation} />
-            )}
-          />
-          <Text style={style.sectionTitle}>Báo Hà Nội</Text>
         </View>
       </ScrollView>
       <View style={style.footer}>
@@ -263,9 +271,10 @@ const Home = ({ navigation }) => {
   );
 };
 
+
 const style = StyleSheet.create({
   header: {
-    paddingVertical: 20,
+    paddingVertical: 40,
     paddingHorizontal: 20,
     flexDirection: "row",
     justifyContent: "space-between",

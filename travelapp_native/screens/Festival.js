@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,7 +9,6 @@ import {
   Dimensions,
   ImageBackground,
 } from "react-native";
-import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons/faAngleLeft";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons/faLocationDot";
@@ -16,58 +16,79 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 
 const SLIDER_WIDTH = Dimensions.get("window").width;
 
-const Item = ({ item, navigation }) => (
-  <View style={styles.itemContainer}>
-    <ImageBackground source={{ uri: item.imageUrls[0] }} resizeMode="cover" style={styles.image}>
-      <TouchableOpacity
-        style={styles.homeBtn}
-        onPress={() => navigation.navigate("Detail", item)}
-      >
-        <View style={styles.buttonContainer}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{item.name}</Text>
-            <Text style={styles.location}>
-              <FontAwesomeIcon icon={faLocationDot} color="white" />
-              {item.address}
-            </Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    </ImageBackground>
-  </View>
-);
+const Item = ({ item, navigation }) => {
+  // Kiểm tra tất cả các thuộc tính cần thiết
+  if (
+    !item ||
+    !item.imageUrls ||
+    !item.imageUrls[0] ||
+    !item.name ||
+    !item.address
+  ) {
+    return null; // Không hiển thị mục nếu bất kỳ thuộc tính nào thiếu
+  }
 
-export default function ListPost({ navigation, route }) {
-  const { historyData } = route.params;
+  return (
+    <View style={styles.itemContainer}>
+      <ImageBackground
+        source={{ uri: item.imageUrls[0] }} // Đảm bảo imageUrls[0] là URL hợp lệ
+        resizeMode="cover"
+        style={styles.image}
+      >
+        <TouchableOpacity
+          style={styles.homeBtn}
+          onPress={() => navigation.navigate("Detail", item)}
+        >
+          <View style={styles.buttonContainer}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>{item.name}</Text>
+              <Text style={styles.location}>
+                <FontAwesomeIcon icon={faLocationDot} color="white" />
+                {item.address}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </ImageBackground>
+    </View>
+  );
+};
+
+export default function Festival({ navigation, route }) {
+  const { festivalData } = route.params;
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredData, setFilteredData] = useState(historyData);
+  const [filteredData, setFilteredData] = useState(festivalData);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
     if (query) {
-      const filtered = historyData.filter((item) =>
+      const filtered = festivalData.filter((item) =>
         item.name.toLowerCase().includes(query.toLowerCase())
       );
       setFilteredData(filtered);
     } else {
-      setFilteredData(historyData);
+      setFilteredData(festivalData);
     }
   };
+
+  if (!festivalData || !Array.isArray(festivalData)) {
+    return (
+      <View style={styles.container}>
+        <Text>No data available</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.goBack()}
-          >
-            <FontAwesomeIcon icon={faAngleLeft} size={25} />
-          </TouchableOpacity>
-        </View>
-        <View>
-          <Text style={styles.logo}>Thông tin di tích</Text>
-        </View>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.goBack()}
+        >
+          <FontAwesomeIcon icon={faAngleLeft} size={25} />
+        </TouchableOpacity>
+        <Text style={styles.logo}>Lễ hội</Text>
         <View></View>
       </View>
       <View style={styles.searchContainer}>
@@ -89,9 +110,7 @@ export default function ListPost({ navigation, route }) {
 
       <FlatList
         data={filteredData}
-        renderItem={({ item }) => (
-          <Item item={item} navigation={navigation} />
-        )}
+        renderItem={({ item }) => <Item item={item} navigation={navigation} />}
         keyExtractor={(item) => item.id.toString()}
       />
     </View>
@@ -192,9 +211,5 @@ const styles = StyleSheet.create({
   location: {
     color: "white",
     fontWeight: "bold",
-  },
-  timeContainer: {},
-  date: {
-    color: "white",
   },
 });
